@@ -13,3 +13,5 @@ services:
     working_dir: /mnt/
     environment:
       PYTHONDONTWRITEBYTECODE: 1
+      S3_SECRET_KEY: ${S3_SECRET_KEY}
+      S3_ACCESS_KEY: ${S3_ACCESS_KEY}
