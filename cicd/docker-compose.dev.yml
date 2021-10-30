@@ -1,0 +1,15 @@
+version: '3.8'
+
+services:
+  core:
+    build:
+      context: ../app
+      target: app
+    command: /bin/bash -c 'python3 manage.py'
+    ports:
+      - "8080:8080"
+    volumes:
+      - ../app:/mnt
+    working_dir: /mnt/
+    environment:
+      PYTHONDONTWRITEBYTECODE: 1
