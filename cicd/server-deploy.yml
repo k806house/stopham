@@ -9,6 +9,7 @@
       dest: '/opt/{{ item }}'
     loop:
       - 'app'
+      - 'celeblur'
       - 'cicd'
 
   - name: Install docker module
