@@ -2,10 +2,10 @@ import os
 
 from flask import Flask, request
 
-from embedding_storage import EmbeddingStorage
+from storage import Storage
 
-global emb_storage
-emb_storage = EmbeddingStorage()
+global storage
+storage = Storage()
 
 app = Flask(__name__)
 
@@ -14,7 +14,7 @@ app = Flask(__name__)
 def emb_add():
     emb = request.json["emb"]
     name = request.json["name"]
-    emb_storage.add(emb, name)
+    storage.add(emb, name)
     return {}
 
 
@@ -22,8 +22,27 @@ def emb_add():
 def emb_k_nbrs():
     emb = request.json["emb"]
     tol = request.json.get("tol", 0.6)
-    name = emb_storage.find_match(emb, tol)
+    name = storage.find_match(emb, tol)
     return {"name": name}
+
+
+@app.route("/get_names", methods=["POST"])
+def get_names():
+    return {"names": storage.get_names()}
+
+
+@app.route("/save", methods=["POST"])
+def save():
+    filename = request.json.get("filename", "dump")
+    storage.save(filename)
+    return {}
+
+
+@app.route("/load", methods=["POST"])
+def load():
+    filename = request.json.get("filename", "dump")
+    storage.load(filename)
+    return {}
 
 
 if __name__ == "__main__":

@@ -23,3 +23,21 @@ class StorageClient:
         data = response.json()
 
         return data["name"]
+
+    def get_names(self):
+        response = requests.post(urljoin(self.url, "/get_names"),
+                                 json={})
+        data = response.json()
+
+        return data["names"]
+
+
+    def save(self, filename):
+        requests.post(urljoin(self.url, "save"), json={
+            "filename": filename,
+        })
+
+    def load(self, filename):
+        requests.post(urljoin(self.url, "load"), json={
+            "filename": filename,
+        })

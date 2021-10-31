@@ -11,9 +11,9 @@ for celeb_dir in dataset:
     print(celeb_dir)
     celeb_name = celeb_dir.split('/')[-1]
     sessions = glob.glob(f"{celeb_dir}/*/*")
-    sessions = random.sample(sessions, min(2, len(sessions)))
+    sessions = random.sample(sessions, min(3, len(sessions)))
     sess_photos = [glob.glob(f"{sess}/*") for sess in sessions]
-    sess_photos = [random.sample(photos, min(2, len(photos))) for photos in sess_photos]
+    sess_photos = [random.sample(photos, min(5, len(photos))) for photos in sess_photos]
 
     for photos in sess_photos:
         for img_path in photos:

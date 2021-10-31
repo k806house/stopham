@@ -8,7 +8,10 @@ from app.storage.client import StorageClient
 
 SCALE_DOWN = 2
 
-class Watcher:
+cur_dets = {}
+
+
+class VideoProcessor:
     def __init__(self):
         self.storage_client = StorageClient("http://localhost:5000")
 
@@ -16,19 +19,28 @@ class Watcher:
         cap = cv2.VideoCapture(cap_from)
 
         flag = True
+        cnt = 0
+        timecodes = []
         while cap.isOpened():
             ret, img = cap.read()
 
             if not ret:
                 break
 
-            if flag:
-                flag = not flag
+            if cnt < 7:
+                cnt += 1
                 continue
+
+            cnt = 0
+
+            t = cap.get(cv2.CAP_PROP_POS_MSEC)
+            print(t / 1000)
 
             # Resize frame of video to 1/4 size for faster face recognition processing
 
-            small_frame = cv2.resize(img, (0, 0), fx=1/SCALE_DOWN, fy=1/SCALE_DOWN)
+            small_frame = cv2.resize(img, (0, 0),
+                                     fx=1 / SCALE_DOWN,
+                                     fy=1 / SCALE_DOWN)
 
             # Convert the image from BGR color (which OpenCV uses) to RGB color (which face_recognition uses)
             rgb_small_frame = small_frame[:, :, ::-1]
@@ -46,6 +58,21 @@ class Watcher:
 
                 face_names.append(name)
 
+            for name in list(cur_dets.keys()):
+                if name not in face_names:
+                    t_start, [x1, y1], [x2, y2] = cur_dets[name]
+                    if t - t_start < 500:
+                        continue
+
+                    print(f"{name}: START=[{t_start}], END=[{t}]")
+                    timecodes.append({
+                        "time_start": cur_dets[name],
+                        "time_end": t,
+                        "corner_1": [x2, y2],
+                        "corner_2": [x1, y1],
+                    })
+                    del cur_dets[name]
+
             for (top, right, bottom,
                  left), name in zip(face_locations, face_names):
                 # Scale back up face locations since the frame we detected in was scaled to 1/4 size
@@ -54,12 +81,15 @@ class Watcher:
                 bottom *= SCALE_DOWN
                 left *= SCALE_DOWN
 
-                top -= 150
+                top -= 50
                 bottom += 50
 
                 if name != "Unknown":
                     img[top:bottom, left:right] = cv2.GaussianBlur(
                         img[top:bottom, left:right], (91, 91), 0)
+
+                    if name not in cur_dets:
+                        cur_dets[name] = (t, [bottom, left], [top, right])
 
                 # Draw a box around the face
                 cv2.rectangle(img, (left, top), (right, bottom), (0, 0, 255),
@@ -72,15 +102,16 @@ class Watcher:
                 cv2.putText(img, name, (left + 6, bottom - 6), font, 1.0,
                             (255, 255, 255), 1)
 
-            cv2.imshow('result', img)
+            # cv2.imshow('result', img)
             if cv2.waitKey(1) == ord('q'):
                 break
 
         cap.release()
+        return timecodes
 
 
 if __name__ == "__main__":
     cap_from = sys.argv[1] if len(sys.argv) > 1 else 0
 
-    watcher = Watcher()
-    watcher.run(cap_from)
+    proc = VideoProcessor()
+    proc.run(cap_from)
