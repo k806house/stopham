@@ -22,27 +22,6 @@ schema = {
 }
 
 
-def get_result(src_url):
-    audio = {
-        "result": [
-            {
-                "time_start": 1.23456,
-                "time_end": 2.3456
-            }
-        ]
-    }
-    video = {
-        "result": [
-            {
-                "time_start": 1.23456,
-                "time_end": 2.3456
-            }
-        ]
-    }
-
-    return {'audio': audio, 'video': video}
-
-
 def construct_blueprint():
     core_bp = Blueprint('core', __name__)
     CORS(core_bp)
