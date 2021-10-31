@@ -22,7 +22,26 @@ services:
       context: ../celeblur
       target: storage
     restart: always
+    command: /bin/bash -c 'python3 app/storage/server.py'
     ports:
       - "5000:5000"
+    volumes:
+      - /Users/a19179021:/opt 
+    working_dir: /workdir/
     environment:
       PORT: 5000
+
+  engine:
+    build:
+      context: ../celeblur
+      target: storage
+    restart: always
+    command: /bin/bash -c 'sleep 20 && python3 app/engine/server.py'
+    ports:
+      - "5001:5001"
+    volumes:
+      - /Users/a19179021:/opt 
+    working_dir: /workdir/
+    environment:
+      PYTHONPATH: /workdir
+      PORT: 5001

@@ -1,6 +1,7 @@
 import os
+import json
 
-from flask import Flask, request
+from flask import Flask, Response, request
 
 from storage import Storage
 
@@ -42,7 +43,13 @@ def save():
 def load():
     filename = request.json.get("filename", "dump")
     storage.load(filename)
-    return {}
+    return Response(
+        json.dumps({
+            "code": "200",
+            "message": "Load success",
+        }),
+        status=200
+    )
 
 
 if __name__ == "__main__":

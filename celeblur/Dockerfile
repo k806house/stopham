@@ -6,7 +6,11 @@ RUN apt-get -y update && \
     apt-get install -y --fix-missing \
     build-essential \
     cmake \
-    zip
+    zip \
+    ffmpeg \
+    libsm6 \
+    libxext6
+
 ADD requirements.txt /tmp/
 RUN pip3 install --no-cache-dir -Ur /tmp/requirements.txt
 

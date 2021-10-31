@@ -10,7 +10,7 @@ from pydub import AudioSegment
 
 class AudioProcessor:
     def __init__(self):
-        self.storage_client = StorageClient("http://localhost:5000")
+        self.storage_client = StorageClient("http://storage:5000")
         self.celeb_names = [
             name.lower() for name in self.storage_client.get_names()
         ]
@@ -42,7 +42,7 @@ class AudioProcessor:
         mute_at = []
         # Iterate from 0 to end of the file,
         # with increment = interval
-        for i in range(0, 2 * n, interval):
+        for i in range(0, 2*n, int(interval)):
 
             # During first iteration,
             # start is 0, end is the interval
@@ -157,13 +157,13 @@ class AudioProcessor:
                 right = end
         merged_intervals.append((left, right))
 
-        # censor_audio = AudioSegment.from_wav('arcade.wav')
+        censor_audio = AudioSegment.from_wav('town.wav')
         print(merged_intervals)
         result_audio = AudioSegment.silent(0)
         cur = 0
         for start, end in merged_intervals:
             result_audio += audio[cur:start]
-            result_audio += AudioSegment.silent(end - start)
+            result_audio += censor_audio[:end-start]
             cur = end
         result_audio += audio[cur:]
 

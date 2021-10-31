@@ -1,3 +1,9 @@
 Flask==2.0.2
+flask_cors==3.0.9
 numpy==1.19.0
 face_recognition
+SpeechRecognition==3.8.1
+nltk==3.6.5
+pydub==0.25.1
+opencv-python==4.5.4.58
+requests==2.26.0

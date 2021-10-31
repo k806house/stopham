@@ -2,6 +2,7 @@ import os
 import json
 import tempfile
 
+import requests
 from flask import Blueprint, Response, request, redirect, current_app, jsonify, g
 from flask_cors import CORS
 from flask_expects_json import expects_json
@@ -53,7 +54,10 @@ def construct_blueprint():
             src_url = g.data['source']
             prefix = g.data['prefix']
 
-            result_files = get_result(src_url)
+            r = requests.post(f'{current_app.config["STORAGE_URL"]}/recognize', json={'source': src_url})
+            print(r.json())
+            result_files = r.json()
+
             for type_file, result_file in result_files.items():
                 with tempfile.NamedTemporaryFile(mode="w+") as tmp_file:
                     json.dump(result_file, tmp_file)

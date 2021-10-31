@@ -15,6 +15,6 @@ elif [ "$1" = "--celeblur" ]; then
     docker-compose -f docker-compose.dev.yml up -d --remove-orphans storage
 elif [ "$1" = "--help" ]; then
     echo "Flags:"
-    echo "--app		up app"
+    echo "--app		    up app"
     echo "--celeblur	up celeblur"
 fi

@@ -33,8 +33,8 @@ def process_audio(source):
 
 @app.route("/recognize", methods=["POST"])
 def emb_add():
-    source = request.json["source"]
-    prefix = request.json["prefix"]
+    data = request.get_json(force=True)
+    source = data["source"]
 
     audio_filename = "audio.wav"
     command = f"echo yes | ffmpeg -i {source} -ac 1 -ar 16000 -vn {audio_filename}"
@@ -56,7 +56,13 @@ def emb_add():
     with open(f"{prefix}_audio.json", 'w') as f:
         json.dump({"result": audio_timecodes}, f)
 
-    return {}
+    return Response(
+        json.dumps({
+            "audio": audio_timecodes,
+            "video": video_timecodes
+        }),
+        status=200
+    )
 
 
 if __name__ == "__main__":
