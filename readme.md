@@ -13,3 +13,15 @@ cd cicd && ./run_dev.sh
 ```
 curl --data '{"filename": "/opt/dump"}' --header 'Content-Type: application/json' http://localhost:5000/load
 ```
+
+### Деплой на виртуалку
+
+1. Зайти на гитхабе в Actions
+2. Слева в Workflows выбрат Run server deploy
+3. Справа нажать Run workflow
+4. Нажать на зеленую кнопку Run workflow
+5. После успешного завершения деплоя выполнить
+
+```
+curl --data '{"filename": "/opt/dump"}' --header 'Content-Type: application/json' http://46.243.143.125:5000/load
+```
