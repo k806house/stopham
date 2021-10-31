@@ -54,13 +54,13 @@ def construct_blueprint():
                 with tempfile.NamedTemporaryFile(mode="w+") as tmp_file:
                     json.dump(result_file, tmp_file)
                     tmp_file.flush()
-                    upload_file_by_name(tmp_file.name, 'hackathon-ecs-4', '', f'{prefix}_{type_file}.json')
+                    upload_file_by_name(tmp_file.name, current_app.config["S3_BUCKET"], '', f'{prefix}_{type_file}.json')
 
 
             return Response(
                 json.dumps({
                     "code": "200",
-                    "message":"Files saved"
+                    "message": "Files saved"
                 }),
                 status=200
             )
