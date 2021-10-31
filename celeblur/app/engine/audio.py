@@ -157,7 +157,7 @@ class AudioProcessor:
                 right = end
         merged_mute_intervals.append((left, right))
 
-        censor_audio = AudioSegment.from_wav('town.wav')
+        censor_audio = AudioSegment.from_wav('/opt/town.wav')
         print(merged_mute_intervals)
         result_audio = AudioSegment.silent(0)
         cur = 0

@@ -3,7 +3,7 @@ import multiprocessing
 import os
 import subprocess
 
-from flask import Flask, request
+from flask import Flask, Response, request
 
 from audio import AudioProcessor
 from video import VideoProcessor
@@ -49,12 +49,6 @@ def emb_add():
     # p.join()
 
     # video_timecodes = return_dict[0]
-
-    with open(f"{prefix}_video.json", 'w') as f:
-        json.dump({"result": video_timecodes}, f)
-
-    with open(f"{prefix}_audio.json", 'w') as f:
-        json.dump({"result": audio_timecodes}, f)
 
     return Response(
         json.dumps({

@@ -34,7 +34,7 @@ def construct_blueprint():
             prefix = g.data['prefix']
 
             r = requests.post(f'{current_app.config["STORAGE_URL"]}/recognize', json={'source': src_url})
-            print(r.json())
+            print(r.text)
             result_files = r.json()
 
             for type_file, result_file in result_files.items():
