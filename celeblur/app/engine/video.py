@@ -24,7 +24,7 @@ class VideoProcessor:
         cap = cv2.VideoCapture(cap_from)
 
         fourcc = cv2.VideoWriter_fourcc('m', 'p', '4', 'v')
-        out = cv2.VideoWriter("/opt/out.mp4", fourcc, cap.get(cv2.CAP_PROP_FPS),
+        out = cv2.VideoWriter("/opt/out_tmp.mp4", fourcc, cap.get(cv2.CAP_PROP_FPS),
                               (int(cap.get(cv2.CAP_PROP_FRAME_WIDTH)),
                                int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))))
 

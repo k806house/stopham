@@ -50,6 +50,9 @@ def emb_add():
 
     # video_timecodes = return_dict[0]
 
+    command = f"echo yes | ffmpeg -i /opt/out_tmp.mp4 -i out.wav -c:v copy -c:a aac /opt/out.mp4"
+    subprocess.call(command, shell=True)
+
     return Response(
         json.dumps({
             "audio": audio_timecodes,
