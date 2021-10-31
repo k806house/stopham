@@ -21,10 +21,6 @@ schema = {
 }
 
 
-def _not_valid(body):
-    return 'source' not in body or 'prefix' not in body
-
-
 def get_result(src_url):
     audio = {
         "result": [
@@ -44,6 +40,7 @@ def get_result(src_url):
     }
 
     return {'audio': audio, 'video': video}
+
 
 def construct_blueprint():
     core_bp = Blueprint('core', __name__)
