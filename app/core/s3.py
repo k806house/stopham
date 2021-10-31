@@ -19,6 +19,10 @@ def _delete_obj_if_exists(s3, bucket, key):
     s3.Object(bucket, key).delete()
 
 
+def _download_obj_if_exists(s3, bucket, key):
+    return s3.Object(bucket, key).get()
+
+
 def _upload_file_by_exts_impl(client, bucket, s3_folder, dir, exts):
     for root, dirs, files in os.walk(dir, topdown=False):
         for name in files:
@@ -54,6 +58,16 @@ def upload_files_by_exts(dir, bucket, s3_folder, exts):
 def upload_file_by_name(filename, bucket, s3_folder, s3_filename):
     s3_client, s3 = _get_s3()
     s3_client.upload_file(filename, bucket, os.path.join(s3_folder, s3_filename))
+
+
+def download_file_by_name(s3_link):
+    parsed = urlparse(s3_link)
+    s3_url = f"{parsed.scheme}://{parsed.hostname}"
+    splited_path = parsed.path.lstrip("/").split("/", 1)
+    bucket, key = splited_path
+    s3_client, s3 = _get_s3()
+    obj = _download_obj_if_exists(s3, bucket, key)
+    return obj['Body'].read().decode('utf-8')
 
 
 def delete_file_by_name(s3_link):
