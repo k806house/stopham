@@ -2,12 +2,23 @@ import os
 import json
 import tempfile
 
-from flask import Blueprint, Response, request, redirect, current_app, jsonify
+from flask import Blueprint, Response, request, redirect, current_app, jsonify, g
 from flask_cors import CORS
+from flask_expects_json import expects_json
 from werkzeug.utils import secure_filename
 from werkzeug.exceptions import BadRequest
 
 from core.s3 import upload_file_by_name
+
+
+schema = {
+    'type': 'object',
+    'properties': {
+        'source': {'type': 'string'},
+        'prefix': {'type': 'string'}
+    },
+    'required': ['source', 'prefix']
+}
 
 
 def _not_valid(body):
@@ -39,15 +50,11 @@ def construct_blueprint():
     CORS(core_bp)
 
     @core_bp.route('/recognize', methods=['POST'])
+    @expects_json(schema)
     def recognize():
         if request.method == 'POST':
-            data = request.get_json(force=True)
-
-            if _not_valid(data):
-                raise BadRequest('Data doesn\'t contain all required fields')
-
-            src_url = data['source']
-            prefix = data['prefix']
+            src_url = g.data['source']
+            prefix = g.data['prefix']
 
             result_files = get_result(src_url)
             for type_file, result_file in result_files.items():
@@ -66,4 +73,3 @@ def construct_blueprint():
             )
 
     return core_bp
-
