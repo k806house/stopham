@@ -65,6 +65,9 @@ def construct_blueprint():
                     upload_file_by_name(tmp_file.name, current_app.config["S3_BUCKET"], '', f'{prefix}_{type_file}.json')
 
 
+            # save result video
+            upload_file_by_name(current_app.config["VIDEO_RESULT_PATH"], current_app.config["S3_BUCKET"], '', f'{prefix}_result.mp4')
+
             return Response(
                 json.dumps({
                     "code": "200",
