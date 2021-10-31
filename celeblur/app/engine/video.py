@@ -8,10 +8,10 @@ from app.storage.client import StorageClient
 from face_recognition.api import face_locations
 
 SCALE = 2
-MIN_TIME_FOR_DETECTION = 500
+MIN_TIME_FOR_DETECTION = 1000
 UNKNOWN_NAME = "Unknown"
 BLUR_RADIUS = 91
-NUM_SKIP_FRAMES = 5
+NUM_SKIP_FRAMES = 6
 DETECTION_THRESHOLD = 0.5
 
 

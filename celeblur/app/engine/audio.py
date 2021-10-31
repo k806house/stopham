@@ -7,6 +7,9 @@ from app.storage.client import StorageClient
 from nltk import ngrams
 from pydub import AudioSegment
 
+FRAME_INTERVAL = 3
+FRAME_OVERLAP = 1.5
+
 
 class AudioProcessor:
     def __init__(self):
@@ -28,8 +31,8 @@ class AudioProcessor:
         # Text file to write the recognized audio
         fh = open("recognized.txt", "w+")
 
-        interval = 3 * 1000
-        overlap = 1.5 * 1000
+        interval = FRAME_INTERVAL * 1000
+        overlap = FRAME_OVERLAP * 1000
 
         # Initialize start and end seconds to 0
         start = 0
@@ -39,7 +42,7 @@ class AudioProcessor:
         # When audio reaches its end, flag is set to 1 and we break
         flag = 0
 
-        mute_at = []
+        mute_intervals = []
         # Iterate from 0 to end of the file,
         # with increment = interval
         for i in range(0, 2*n, int(interval)):
@@ -88,13 +91,11 @@ class AudioProcessor:
 
             # Specify the audio file to recognize
 
-            AUDIO_FILE = chunk_filename
-
             # Initialize the recognizer
             r = sr.Recognizer()
 
             # Traverse the audio file and listen to the audio
-            with sr.AudioFile(AUDIO_FILE) as source:
+            with sr.AudioFile(chunk_filename) as source:
                 audio_listened = r.listen(source)
 
             # Try to recognize the listened audio
@@ -102,8 +103,7 @@ class AudioProcessor:
             try:
                 rec = r.recognize_google(audio_listened)
                 recs = rec.split(' ')
-                ngrms = list(ngrams(recs, 1)) + list(ngrams(recs, 2)) + list(
-                    ngrams(recs, 3))
+                ngrms = list(ngrams(recs, 1)) + list(ngrams(recs, 2)) + list(ngrams(recs, 3))
                 ngrms = ['_'.join(ng) for ng in ngrms]
 
                 result = []
@@ -117,7 +117,7 @@ class AudioProcessor:
                             break
 
                 if len(result) > 0:
-                    mute_at.append((start, end))
+                    mute_intervals.append((start, end))
 
                 text = f"START=[{start/1000}], END=[{end/1000}] | {ngrms}, {result}\n"
                 print(text)
@@ -141,27 +141,27 @@ class AudioProcessor:
                 fh.close()
                 break
 
-        if len(mute_at) == 0:
+        if len(mute_intervals) == 0:
             AudioSegment.export(audio, 'out.wav')
             return
 
-        merged_intervals = []
-        left, right = mute_at[0]
-        print(mute_at)
-        for start, end in mute_at[1:]:
+        merged_mute_intervals = []
+        left, right = mute_intervals[0]
+        print(mute_intervals)
+        for start, end in mute_intervals[1:]:
             if start > right:
-                merged_intervals.append((left, right))
+                merged_mute_intervals.append((left, right))
                 left = start
                 right = end
             else:
                 right = end
-        merged_intervals.append((left, right))
+        merged_mute_intervals.append((left, right))
 
         censor_audio = AudioSegment.from_wav('town.wav')
-        print(merged_intervals)
+        print(merged_mute_intervals)
         result_audio = AudioSegment.silent(0)
         cur = 0
-        for start, end in merged_intervals:
+        for start, end in merged_mute_intervals:
             result_audio += audio[cur:start]
             result_audio += censor_audio[:end-start]
             cur = end
@@ -172,7 +172,7 @@ class AudioProcessor:
         return [{
             "time_start": start / 1000,
             "time_end": end / 1000
-        } for start, end in merged_intervals]
+        } for start, end in merged_mute_intervals]
 
     @staticmethod
     def long_censor(censor_audio, duration):
