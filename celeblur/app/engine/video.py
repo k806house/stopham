@@ -116,7 +116,7 @@ class VideoProcessor:
 
             print(f"{name}: START=[{t_start}], END=[{t_cur}]")
             timecodes.append({
-                "time_start": cur_dets[name],
+                "time_start": t_start,
                 "time_end": t_cur,
                 "corner_1": [x2, y2],
                 "corner_2": [x1, y1],
