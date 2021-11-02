@@ -8,7 +8,7 @@
 ```bash
 cd cicd && ./run_dev.sh
 ```
-4. Положить файлы `dump_encodings`, `dump_names` из `data/` в директорию, которая маунтится к контейнеру storage
+4. Положить файлы `dump_encodings`, `dump_names`, `town.wav` из `data/` в директорию, которая маунтится к контейнеру storage
 
 5. После старта контейнера storage выполнить
 ```
